@@ -1,0 +1,28 @@
+#!/bin/ksh
+
+#
+# Displays time left for xdisk space.
+#
+# Set XDISK_NUM_DAYS_ALLOWED based on the number of days you were granted when
+# you created the storage, and set XDISK_START_SEC by calling `date +%s` on the
+# day you created the storage.
+#
+# For added value, source this in your .kshrc (or .bashrc, or .zshrc, ...)
+#
+# Written by David Sidi. 24 Sept. 2015.
+#
+
+# XDisk deadline
+XDISK_NUM_DAYS_ALLOWED=180
+XDISK_START_SEC=1443129278
+CURR_SEC=$(date +%s)
+((SEC_PER_DAY=24*3600))
+
+XDISK_END_SEC=$(echo "$XDISK_START_SEC + $XDISK_NUM_DAYS_ALLOWED * $SEC_PER_DAY" | bc)
+XDISK_DAYS_LEFT=$(echo "($XDISK_END_SEC - $CURR_SEC) / $SEC_PER_DAY"| bc)
+
+echo "************************************************************************"
+echo "xdisk expires on $(date --date @${XDISK_END_SEC})"
+echo "xdisk data expires in $XDISK_DAYS_LEFT days."
+echo "************************************************************************"
+
