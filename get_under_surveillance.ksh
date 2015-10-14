@@ -1,17 +1,22 @@
 #!/bin/ksh
 
-# Script to fetch Under Surveillance from last Friday
+# Script to fetch the KXCI radio show Under Surveillance from last Friday
 # Written by David Sidi.
 
+function write_line {
+   TERMINAL_WIDTH=$(stty size | cut -d' ' -f2)
+   for ((j=0; j<$TERMINAL_WIDTH; j++)); do
+      echo -n "-"
+   done
+   echo
+}
 
 function display_banner {
-   echo "----------------------------------------------------------------------------------------------------------"
-   echo "----------------------------------------------------------------------------------------------------------"
+   write_line; write_line
    echo Getting
    figlet -t "UNDER SURVEILLANCE"
    echo for $(date -d "${DATE_TO_GET}" +%F)
-   echo "----------------------------------------------------------------------------------------------------------"
-   echo "----------------------------------------------------------------------------------------------------------"
+   write_line; write_line
 }
 
 
@@ -28,7 +33,7 @@ DAY=$(date -d "${DATE_TO_GET}" +%d)       # day, with 2 digits (e.g., 31)
 SAVEDIR="${HOME}/Music/under_surveillance/${MONTHNAME}_${DAY}_${YEAR}"
 SUCCESSES=0
 
-if mkdir ${SAVEDIR}; then
+if mkdir ${SAVEDIR} 2> /dev/null; then
    cd $SAVEDIR
    display_banner
 else
@@ -36,7 +41,7 @@ else
    exit 1 
 fi
 
-for SEQ_NUM in 050000 051500 054500 060000; do
+for SEQ_NUM in 050000 051500 054500 053000 060000; do
    FILENAME="kxci_${YEAR}${MONTH}${DAY}-${SEQ_NUM}.mp3"
    if curl "https://s3-us-west-1.amazonaws.com/rfa-archive-dev/${FILENAME}" -o ${FILENAME}; then
       ((SUCCESSES += 1))
