@@ -33,7 +33,7 @@ DAY=$(date -d "${DATE_TO_GET}" +%d)       # day, with 2 digits (e.g., 31)
 SAVEDIR="${HOME}/Music/under_surveillance/${MONTHNAME}_${DAY}_${YEAR}"
 SUCCESSES=0
 
-if mkdir ${SAVEDIR} 2> /dev/null; then
+if mkdir -p ${SAVEDIR} 2> /dev/null; then
    cd $SAVEDIR
    display_banner
 else
@@ -41,10 +41,20 @@ else
    exit 1 
 fi
 
-for SEQ_NUM in 050000 051500 054500 053000 060000; do
+for SEQ_NUM in 050000 051500 054500 053000 060000 061500 063000 064500 070000; do
    FILENAME="kxci_${YEAR}${MONTH}${DAY}-${SEQ_NUM}.mp3"
-   if curl "https://s3-us-west-1.amazonaws.com/rfa-archive-dev/${FILENAME}" -o ${FILENAME}; then
-      ((SUCCESSES += 1))
+   if curl "https://s3-us-west-1.amazonaws.com/rfa-archive-dev/${FILENAME}" \
+      -o ${FILENAME}; then
+
+         ((SUCCESSES += 1))
+         mid3v2 \
+            --artist="Dave Wright, Falcotronik" \
+            --album="Under Surveillance" \
+            --genre="Amish Grime" \
+            --date=${YEAR}-${MONTH}-${DAY} \
+            --comment="Shout out as always to Two toes McPhee and Pickle-faced Pete" \
+            ${FILENAME}
+
    fi
 done
 
